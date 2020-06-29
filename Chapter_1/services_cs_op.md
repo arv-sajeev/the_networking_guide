@@ -25,9 +25,34 @@ Page no- 198 has a figure with the different verticals in each layer
 ## 3. Network interface layer protocols 
 
 TCP/IP includes two protocols in the network interface layer 
-* SLIP serial line internet protocol
-..* Provides basic TCP/IP functionality by creating a layer two connection between two devices in a serial line.
+### 1. SLIP serial line internet protocol
+* forms a layer 2 connection between two devices
+* an IP datagram is passed down to SLIP, this is broken down to bytes and send one at a time
+* after the last byte a special byte value is sent that tells the datagram has ended 11000000
+* if the END value occurs within the datagram it is added with an escape character
+* SLIP doesn't provide features, no error detection or correction mechanisms, compression etc.
 
-* PPP Point to Point protocol 
-Prov
+### 2. PPP Point to Point protocol 
+* it can actually be considered a suite or protocols 
+* replacement for SLIP and is a connection oriented protocol
+* it has a better framing mechanism
+* has details about which protocol is encapsulated 
+* error detection using CRC
+* mechanism to negotiate link parameters like MTU
+* mechanism to test links before transmission occurs
+* authentication, encryption and compression protocols
+#### PPP link setup and phases
+
+Before data can be exchanged a link must be set up between two devices, during this setup 
+process the devices go through a configuration phase where they negotiate and agree upon the 
+different parameters for how data should be passed between them. This function is carried out by the **PPP Link Configuration Protocol**. The LCP might invoke authentication protocols if 
+required by the configuration, and Network Control Protocols. The different phases a PPP link
+undergoes are
+
+* Link dead phase
+* Link establishment phase
+* authentication  (using CHAP OR PAP)
+* Network layer protocol phase
+* Link open phase
+* Link termination phase
 

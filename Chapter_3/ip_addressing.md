@@ -139,5 +139,16 @@ address a prefix length or network prefix which is the network ID size.
 ## IP "Classful" Addressing
 
 When the internet first started they never thought that it would be used by normal people 
-and 
+and there main requirements were just to produce different classes of IP addresses for the
+various size of organizations.
+
+There are 5 classes in the classful addressing system.
+
+| Class | Fraction of total IP space | Number of Net id bits | Number of Host ID bits | Intended used|
+|---	|---			     |---		     |---		      |---	     |
+| A	| 50%   | 8  | 24 | Unicast addressing for very large organizations with millions of hosts connected to it|
+| B	| 25%   | 16 | 16 | Unicast addressing for medium to large organization with thousands of hosts connected |
+| C 	| 12.5% | 24 | 8  | Unicast addressing for smaller organizations for a max 256 hosts |
+| D     | 6.25% | na | na | IP multicasting |
+| E 	| 6.25% | na | na | For experimental use | 
 

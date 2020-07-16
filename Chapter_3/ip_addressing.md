@@ -142,9 +142,12 @@ When the internet first started they never thought that it would be used by norm
 and there main requirements were just to produce different classes of IP addresses for the
 various size of organizations.
 
+The number of hosts on the internet were tiny and only large organizations could even afford
+to be a part of it. 
+
 There are 5 classes in the classful addressing system.
 
-| Class | Fraction of total IP space | Number of Net id bits | Number of Host ID bits | Intended used|
+| Class | Fraction of total IP space | Number of Net id bits | Number of Host ID bits | Intended use|
 |---	|---			     |---		     |---		      |---	     |
 | A	| 50%   | 8  | 24 | Unicast addressing for very large organizations with millions of hosts connected to it|
 | B	| 25%   | 16 | 16 | Unicast addressing for medium to large organization with thousands of hosts connected |
@@ -152,3 +155,55 @@ There are 5 classes in the classful addressing system.
 | D     | 6.25% | na | na | IP multicasting |
 | E 	| 6.25% | na | na | For experimental use | 
 
+### Benefits of classful addressing
+
+* simplicity and clarity : the division is based on clear metrics 
+* flexibiltiy		 : at the time the three levels of flexibility seemed enough
+* ease of routing	 : the class of the address also held info on which part is the network id this made it easier for routers to process
+
+### Host identification and address ranges
+
+The classification carries info about the size of network id and the range of Addresses.
+* if the first bit is 0 it is a class A address
+* if the second bit is 0  it is a class B address
+* if the '' '' ''		it is class C address
+* it the '' '' ''		it is a class D address
+* else it is a class E address
+* the first octet has to start from 1 for class A since 0.0.0.0.is a special address
+* class a first octet can't include 0 and 127 since they both are special so they range from 1-126
+
+
+
+| class | bit pattern (1st octet) | range of first octet | IP address range 	   |
+|---	|---			|---			|---			   |	
+| A	| 0xxxxxxx		| 00000001 - 01111110	| 1.0.0.0 - 126.255.255.255|
+| B	| 10xxxxxx		| 10000000 - 10111111	| 128.0.0.0 - 192.255.255.255 |
+| C	| 110xxxxx 		| 11000000 - 11011111	| 192.0.0.0 - 223.255.255.255 |
+| D	| 1110xxxx		| 11100000 - 11101111	| 224.0.0.0 - 239.255.255.255 |
+| E 	| 1111xxxx		| 11110000 - 11111111	| 240.0.0.0 - 255.255.255.255 |
+
+* the number of different networks possible on a network depends on the class based on the llength of the host id and also the constraints on the first octet values for each class
+* for e.g class A has network ID size 8 but the first bit is constant and hence the possibilities with first bit 1 are 0 so 2^8-1 = 2^7. Also 127 and 0 are reserved so -2 as well = 126
+* the number of hosts for each network is the 2^host-id-size but 2 of these host ID sizes cannot be used so class A has 2^24-2 = 16,277,214 hosts per network
+* the loopback addresses with first octet value 127 are used to short circuit the protocol stack and send packets directly to the devices own network layer without reaching the data link layer
+#### IP addresses with special meanings
+
+| Network-id 	| Host-id 	| Meaning 						|
+|---		|---		|---							|
+| specified	| all zeros	| to the entire network specified			|
+| all zeros 	| specified	| specified host on this network or default network 	|
+| all zeros	| all zeros	|used by host to refer to itself when its own ip is unknown|
+| specified	| all ones	|all hosts one this entire local network		|
+| all ones	| all ones	| all hosts on the directly connected network		| 
+
+### IP multicast addressing
+
+The IP is primarily concerned with unicast communication but it supports multicast as well.
+The class D addresses are used for multicast and these are further scoped as well for global
+and local use.
+
+### Problems with classful IP addressing
+
+* Inefficient use of address space
+* Lack of internal address flexibility
+* large number of router table entries would be required

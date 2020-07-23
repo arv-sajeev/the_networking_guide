@@ -36,3 +36,34 @@ of 20 bytes.
 | Options | variable | multiple options can be used |
 | Padding | variable | Used to pad the option to make header a multiple of 4 bytes |
 | Data | variable | The data to be transmitted or it's fragments|
+
+#### Time to Live Field
+
+This field was originally intended to hold a time value that holds the time left to live, but
+it now holds a hop counter that it decrements each hop as it is transmitted from a router.
+When the field reaches zero the message is dropped and an ICMP time exceeded message is sent
+to inform the source that the message has been dropped. This is done to prevent router loops.
+
+#### Type of Service field
+
+This field is provided to implement QoS details for IP datagram delivery, giving precedence 
+and the preferred manner in which they should be delivered.
+
+### IP datagram options
+
+All IP datagrams must include a standard 20-byte header, in addition to this they have the
+ability to to add options that provide additional fields and provide flexibilty in how IP 
+handles datagrams. Each option has its own subfield format.
+
+#### IP option format
+
+| Option Type | 1 | Option Type :: The 8-bit field is divided into 3 subfields 1 bit for whether the option should be copied for all fragments 2 bits for the option class the popular values are Control and Debugging |
+| Option Length | 0 or 1 	|	Size of the entire option field |
+| Option data	| 0 or variable |  	For variable length options	|
+
+## IP datagram fragmentation and reassembly
+
+As datagram are passed in between the various routers in an internetwork the data-link layers
+along the path might have varying capabilities. The frame size of the IP datagram must match
+the maximum transmission unit size. To make sure packets fit the stipulated size the packets
+must be fragmented and are reassembled to the original message at each hop.

@@ -101,3 +101,21 @@ details. But while it is necessary it also raises many issues.
 * sequencing and placement - the packets though sent in a sequential order due to the unreliable nature of the network will reach out of place. The receiving device will have to determine the sequencing of the packets and reassemble them in the original order.
 * separation of fragmented messages - multiple IP datagram maybe fragmented and reach the recipient almost simultaneously we need to find a way to group fragments from the same original packet to reassemble correctly.
 * Completion - the recipient device should be able to tell whether it has received the complete IP datagram or whether it has lost a few fragments along the way. Also it will know when to start reassembly.
+
+
+* The sequencing and placement is done using the fragment number and more fragments flags
+* Separation is done using an identifier for each original datagram
+* The fragment number is along with MF is used for  completion
+* while fragmenting a datagram with options each option has a copied flag that is used to specify whether options have to be copied to 
+* The DF Don't fragment flag is used to prevent fragmenting a datagram when it reaches a link with smaller MTU.
+
+### IP reassembly process
+
+When the multiple fragments of the original datagram are fragmented by the original router or
+the routers in between these fragments have to be reassembled to get the original message.
+While intermediate routers can cause fragmentation when the MTU size is not sufficient the IP protocol does not reassemble datagrams until the final destination is reached, this is major asymmetry in fragmentation and reassembly. Fragments can be routed to multiple different paths, waiting for all packets to reach an intermediate router is not possible and will result in a huge slowdown.
+
+* fragment recognition and identification - a fragmented datagram is identified using the MF set to 1 or offset size > 0, it is identified using a combination of the src and dest ip, protocols and the identifier.
+* buffer initialization - The receiving device uses a buffer to store fragments of messages, to keep track of how much of the message has been received.
+* timer - the receiving device may also use a timer to ensure the fragments reach within a stipulated time and don't go waiting for ever. If it times out an ICMP time exceeded message is sent to the source.
+

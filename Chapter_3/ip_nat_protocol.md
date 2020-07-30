@@ -100,3 +100,46 @@ This can only be used with devices whose addresses are registered with a DNS. Us
 * A DNS server for the internal network resolves the name into a local inside local address.
 * The inside local address is passed to NAT and used to create a mapping between inside local address of the server and an inside global address.
 * When the DNS sends back a name resolution it sends back not the inside local but the global address of the device.
+
+## IP NAT port based (Network Address Port Translation
+
+In both the above methods we are basically using a small pool of global IP addresses to 
+substitute to a large number of local IP addresses. This works well under the assumption that
+only a few of the local devices will have transactions at a given point in time, but if a 
+large number of devices have transactions simultaneously we'll have a huge problem.
+
+### Using ports to multiplex private addresses
+
+Both TCP and UDP transport layer protocols have an additional addressing component used to 
+multiplex the link layer for each process on the device.
+
+* we can use this feature to multiplex the pool of global addresses with a large number of local addresses
+* we can use the thousands of ports available for each IP address and assign it to each local IP address.
+* we can only use this method for TCP and UDP transport layer transactions.
+
+## IP NAT overlapping
+
+In all the cases we have seen till now, we assume that the private addresses used all belong
+to the __RFC 1918__ 10.0.0.0  block which can't be public address, so the NAT router will 
+know that any transaction send by a local device to another local device is actually a 
+reference to a local device and not an outside world. This is not the case when the following happens.
+
+* Private network to private network connections
+* Assignment of public addresses to private address space
+* Reallocation of addresses
+
+The above problem can be solved using twice NAT.
+* When the client send a DNS request for a given public domain name, it is intercepted by the NAT router as well
+* if the response provided uses a local inside address, it is then assigned a mapping that is outside local
+* i.e the outside global address is mapped to a value that is local and doesn't clash with the already allocated local addresses
+* When transactions are send the datagrams src ip (local inside) are converted to (global inside) and the dest ip (local outside to global outside) is done.
+
+## IP NAT compatibility issues and special handling requirements
+
+* IP checksum recalculation - when changes to IP addresses are made the IP header Checksum must be recalculated
+* TCP UDP checksum recalculation - the TCP UDP checksum also supposedly uses the IP address I have not reached there yet but this means their CS must be recalculated as well.
+* The related ICMP messages of IP transactions must also be processed by NAT
+* Applications like FTP embed teh IP within the payload, for NAT to support FTP it needs to be able to identify FTP payload and it's IP location within the payload.
+
+
+

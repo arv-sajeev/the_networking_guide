@@ -147,4 +147,36 @@ Security associations are defined by a set of three parameters called a triple
 
 ## IPSec Authentication header
 
+AH is a protocol that provided authentication of either all or part of the contents of the 
+datagram by adding a header that is calculated based on the values of the datagram.
 
+We use a special hashing algorithm known to everyone, with a key only known to the source and
+the destination. AH performs the computation and puts the result into a special header (ICV) 
+with other fields for transmission. The destination devices performs the same calculation 
+using the key they share and can find out whether the datagram has been tampered with.
+
+### IPv6 Authentication header placement and linking 
+
+The AH is inserted into the IP datagram as an extension header, following the normal IPv6 
+rules. It is linked to the previous header putting into its next header the assigned value 
+for the AH header. The AH header then links to the next extension header or the transport layer header using its next header field.
+* In transport mode AH is placed into the main IP header before the dest options, but after any other extension headers
+* IN tunnel mode it appears as an extension header of the new IP datagram that encapsulates the original one being tunneled.
+
+
+|	 0 	| 	1 	| 	2 	| 	3 	|
+|---		|---		|---		|---		|
+| Next header	| Payload len	| 	Reserved		|
+|			Security parameter index		|
+|			Sequence number				|
+|			Authentication				|
+|			       Data				|
+|			(Integrity check value)			|
+
+
+* Next header 	- a 1 byte to contain the protocol number of the next header after AH
+* Payload len 	- measures length of the AH itself
+* Reserved    	- Not used set to zeroes
+* SPI   	- a 32 bit value that when combined with dest address and SP type identifies the security association
+* Sequence no 	- This is a counter field that is initialized to zero when SA is set up and increments for each datagram sent. Use to uniquely identify datagrams and prevent replay attacks
+* Authentication data - the rest is the result of the hashing algorithm.

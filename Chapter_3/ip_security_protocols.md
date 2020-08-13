@@ -166,12 +166,12 @@ for the AH header. The AH header then links to the next extension header or the 
 
 |	 0 	| 	1 	| 	2 	| 	3 	|
 |---		|---		|---		|---		|
-| Next header	| Payload len	| 	Reserved		|
-|			Security parameter index		|
-|			Sequence number				|
-|			Authentication				|
-|			       Data				|
-|			(Integrity check value)			|
+| Next header	| Payload len	| Reserved	|	''	|
+|Security	| parameter 	| index		|	''	|
+|		|	Sequence| number	|		|
+|	Auth	|	Auth	|   Auth	| 	Auth	|
+|Data		|	 Data	|  Data		| Data		|
+|		| Integrity 	| check value	|		|
 
 
 * Next header 	- a 1 byte to contain the protocol number of the next header after AH
@@ -180,3 +180,19 @@ for the AH header. The AH header then links to the next extension header or the 
 * SPI   	- a 32 bit value that when combined with dest address and SP type identifies the security association
 * Sequence no 	- This is a counter field that is initialized to zero when SA is set up and increments for each datagram sent. Use to uniquely identify datagrams and prevent replay attacks
 * Authentication data - the rest is the result of the hashing algorithm.
+
+### Encapsulating Security payload fields
+
+* Unlike the AH the ESP packages its fields in a very different way.
+* ESP header  	- contains the SPI and Sequence number, comes before the encrypted data
+* ESP trailer 	- This section contains padding used to align encrypted data, it is processed by encryption as well. In contains a next header that points to the header after ESP header.
+* ESP Auth data	- Contains and ICV like in AH.
+
+---
+
+## IPSec key Exchange
+
+The IKE protocol is used to exchange information, mainly the key for encoding  required for 
+secure communication. It is used to allow IPSec enabled devices to share there SA's and setup
+their SAD.
+ 	
